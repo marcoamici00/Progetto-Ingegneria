@@ -399,7 +399,7 @@ class GestorePrenotazione:
                   counting=counting+1
               if counting!=0:
                   bot.send_message(message.chat.id,"Lezione gia' prenotata...")
-                  GestorePrenotazione.prenota(message)
+                  GestorePrenotazione.prenota_menu(message)
               else:
                   GestorePrenotazione.sel(message)
           if check=='+Linguaggi formali e compilatori':
@@ -411,7 +411,7 @@ class GestorePrenotazione:
                    counting=counting+1
                if counting!=0:
                    bot.send_message(message.chat.id,"Lezione gia' prenotata...")
-                   GestorePrenotazione.prenota(message)
+                   GestorePrenotazione.prenota_menu(message)
                else:
                    GestorePrenotazione.sel(message)
           if check=='+Programmazione 2':
@@ -423,7 +423,7 @@ class GestorePrenotazione:
                     counting=counting+1
                 if counting!=0:
                     bot.send_message(message.chat.id,"Lezione gia' prenotata...")
-                    GestorePrenotazione.prenota(message)
+                    GestorePrenotazione.prenota_menu(message)
                 else:
                     GestorePrenotazione.sel(message)
           if check=='+Analisi 2':
@@ -435,7 +435,7 @@ class GestorePrenotazione:
                      counting=counting+1
                  if counting!=0:
                      bot.send_message(message.chat.id,"Lezione gia' prenotata...")
-                     GestorePrenotazione.prenota(message)
+                     GestorePrenotazione.prenota_menu(message)
                  else:
                      GestorePrenotazione.sel(message)
           if check=='+Diritto':
@@ -447,7 +447,7 @@ class GestorePrenotazione:
                     counting=counting+1
                 if counting!=0:
                     bot.send_message(message.chat.id,"Lezione gia' prenotata...")
-                    GestorePrenotazione.prenota(message)
+                    GestorePrenotazione.prenota_menu(message)
                 else:
                     GestorePrenotazione.sel(message)
           if check=='+Fisica':
@@ -459,7 +459,7 @@ class GestorePrenotazione:
                      counting=counting+1
                  if counting!=0:
                      bot.send_message(message.chat.id,"Lezione gia' prenotata...")
-                     GestorePrenotazione.prenota(message)
+                     GestorePrenotazione.prenota_menu(message)
                  else:
                      GestorePrenotazione.sel(message)
 
