@@ -1,15 +1,9 @@
-CREATE TABLE IF NOT EXISTS password(id int,username text,password int);
+
 CREATE TABLE IF NOT EXISTS lezioni(id int,descrizione text,data_ora varchar,aula varchar,posti int);
-CREATE TABLE IF NOT EXISTS piano(id int,descrizione text,data_ora varchar,aula int,posti int);
-CREATE TABLE IF NOT EXISTS piano_studi(id int,descrizione text,data_ora varchar,aula int,posti int);
 CREATE TABLE IF NOT EXISTS posto(descrizione text,posti int);
 DROP table utenti;
 CREATE TABLE IF NOT EXISTS utenti(username varchar,password varchar);
-CREATE TABLE IF NOT EXISTS prenotazioni(description text);
-DELETE FROM prenotazioni;
 DELETE FROM lezioni;
-DELETE FROM piano;
-DELETE FROM piano_studi;
 DELETE FROM utenti;
 DELETE FROM posto;
 CREATE TABLE IF NOT EXISTS sol(nome varchar);

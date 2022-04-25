@@ -13,18 +13,10 @@ class User:
      self.name = name
      data=sqlite3.connect("my_database.sqlite")
      c=data.cursor()
-     ins="Piano_"+name
-     inr="Piano_studi"+name
-     inpr="Prenotazioni_"+name
-     c.execute("CREATE TABLE IF NOT EXISTS "+ins+"(id int,descrizione text,data_ora varchar,aula int,posti int)")
-     c.execute("CREATE TABLE IF NOT EXISTS "+inr+"(id int,descrizione text,data_ora varchar,aula int,posti int)")
-     c.execute("CREATE TABLE IF NOT EXISTS "+inpr+"(description text)")
+    
     
     
         
-    
-
-
 class GestorePiano:
     def crea(message):
      markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -41,7 +33,6 @@ class GestorePiano:
      bot.send_message(message.chat.id, "Inserisci le lezioni nel tuo piano di studi",parse_mode='html', reply_markup=markup)
 
     def inizio(message):
-     #GestoreAccesso.messa()
      markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
      item1 = types.KeyboardButton("Crea il tuo piano")
@@ -388,12 +379,6 @@ class GestorePrenotazione:
      data.close()
      GestoreAccesso.login(message)
 
-    #def register(message):
-     #bot.send_message(message.chat.id, "\nSCEGLI UN USERNAME :\n")
-     #reg(message)
-
-
-
 
     def Checking_add(message):
      check=message.text#check ha l'user inserito
@@ -500,9 +485,6 @@ class GestorePrenotazione:
 class GestoreAccesso:
     messaggino=""
     def login(message):
-     #data=sqlite3.connect("my_database.sqlite")
-     #c=data.cursor()
-     #c.execute("DELETE FROM utenti")
      markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
      item1 = types.KeyboardButton("ACCEDI")
@@ -510,7 +492,6 @@ class GestoreAccesso:
 
      markup.add(item1, item2)
      bot.send_message(message.chat.id, "ACCEDI O REGISTRATI",parse_mode='html', reply_markup=markup)
-     #inizio(message)
 
     def enter(message):
      msg1=bot.send_message(message.chat.id,"INSERISCI UN USERNAME")
@@ -520,11 +501,7 @@ class GestoreAccesso:
     def process1_passw_step(message):
      chat_id = message.chat.id
      age = message.text
-     
-     #user = user_dict[chat_id]
      pin=message.text#pin ha la password
-     #print(pin)
-     #print(messaggino)
      data=sqlite3.connect("my_database.sqlite")
      c=data.cursor()
      a=c.execute("SELECT password FROM utenti WHERE username=?",(messaggino,))
@@ -535,6 +512,9 @@ class GestoreAccesso:
               mess=str(user[0])#in mess ho la password
               if mess==pin:
                    bot.send_message(message.chat.id, "AUTENTICAZIONE EFFETTUATA CON SUCCESSO")
+                   c.execute("CREATE TABLE IF NOT EXISTS Piano_"+messaggino+"(id int,descrizione text,data_ora varchar,aula int,posti int)")
+                   c.execute("CREATE TABLE IF NOT EXISTS Piano_studi"+messaggino+"(id int,descrizione text,data_ora varchar,aula int,posti int)")
+                   c.execute("CREATE TABLE IF NOT EXISTS Prenotazioni_"+messaggino+"(description text)")
                    GestorePiano.inizio(message)
               else:
                     bot.send_message(message.chat.id, "PASSWORD ERRATA")
@@ -544,9 +524,6 @@ class GestoreAccesso:
     def process1_name_step(message):
      chat_id = message.chat.id
      name = message.text
-     #user = User(name)
-     #user_dict[chat_id] = user
-     #print(user.name)#user.name mi da il nome dell'oggetto user che ho costruito
      global messaggino
      messaggino=message.text#come name stesso valore,cioe l'username inserito
      data=sqlite3.connect("my_database.sqlite")
@@ -562,11 +539,6 @@ class GestoreAccesso:
          msg=bot.send_message(message.chat.id, "INSERISCI UNA PASSWORD")
          bot.register_next_step_handler(msg,GestoreAccesso.process1_passw_step)
          
-    #def messa():
-     #print(messaggino)
-     
-
-
 
 class GestoreRegistrazione:
     messaggino=""
@@ -581,13 +553,10 @@ class GestoreRegistrazione:
 
 
     def process_name_step(message):
-        #chat_id = message.chat.id
         name = message.text
         user = User(name)
-        #print(name)
-        #user_dict[chat_id] = user
         global messaggino
-        messaggino=message.text#come name stesso valore,cioe l'username inserito
+        messaggino=message.text #username inserito
         if len(messaggino)>8:
          bot.send_message(message.chat.id, "L'USERNAME SCELTO VIOLA I VINCOLI DEL SISTEMA(max 8 caratteri)")
          GestoreAccesso.login(message)
@@ -626,9 +595,6 @@ class GestoreRegistrazione:
 
 
     def process_passw_step(message):
-        #chat_id = message.chat.id
-        #age = message.text
-        #user = user_dict[chat_id]
         pin=message.text#pin ha la password
         if len(pin)>10:
          bot.send_message(message.chat.id, "LA PASSWORD SCELTA VIOLA I VINCOLI DEL SISTEMA(max 10 caratteri)")
@@ -638,8 +604,6 @@ class GestoreRegistrazione:
           bot.send_message(message.chat.id, "LA PASSWORD SCELTA VIOLA I VINCOLI DEL SISTEMA(min 5 caratteri)")
           GestoreRegistrazione.acc(message)
          else:
-        #print(pin)
-        #print(messaggino)
           data=sqlite3.connect("my_database.sqlite")
           c=data.cursor()
           c.execute('UPDATE utenti SET password=? WHERE username=?',(pin,messaggino))
@@ -647,7 +611,7 @@ class GestoreRegistrazione:
           data.close()
           bot.send_message(message.chat.id,"registrazione effettuata,effettua l'accesso...")
           GestoreAccesso.login(message)
-        #enter()
+       
 
 
 
