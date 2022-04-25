@@ -8,12 +8,22 @@ bot = telebot.TeleBot(TOKEN)
 
 user_dict = {}
 
-
 class User:
-    def __init__(self, name):
-        self.name = name
-        #self.age = None
-        #self.sex = None
+    def __init__(self,name):
+     self.name = name
+     data=sqlite3.connect("my_database.sqlite")
+     c=data.cursor()
+     ins="Piano_"+name
+     inr="Piano_studi"+name
+     inpr="Prenotazioni_"+name
+     c.execute("CREATE TABLE IF NOT EXISTS "+ins+"(id int,descrizione text,data_ora varchar,aula int,posti int)")
+     c.execute("CREATE TABLE IF NOT EXISTS "+inr+"(id int,descrizione text,data_ora varchar,aula int,posti int)")
+     c.execute("CREATE TABLE IF NOT EXISTS "+inpr+"(description text)")
+    
+    
+        
+    
+
 
 class GestorePiano:
     def crea(message):
@@ -31,6 +41,7 @@ class GestorePiano:
      bot.send_message(message.chat.id, "Inserisci le lezioni nel tuo piano di studi",parse_mode='html', reply_markup=markup)
 
     def inizio(message):
+     #GestoreAccesso.messa()
      markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
      item1 = types.KeyboardButton("Crea il tuo piano")
@@ -43,7 +54,7 @@ class GestorePiano:
     def myplan(message):
      data=sqlite3.connect("my_database.sqlite")
      c=data.cursor()
-     d=c.execute("SELECT DISTINCT * FROM prenotazioni")
+     d=c.execute("SELECT DISTINCT * FROM Prenotazioni_"+messaggino)
      bot.send_message(message.chat.id,"PRENOTAZIONI EFFETTUATE:")
      for r in d:
          bot.send_message(message.chat.id,r)
@@ -59,8 +70,8 @@ class GestorePiano:
            c=data.cursor()
            a=c.execute("SELECT * FROM lezioni WHERE descrizione =?", (message.text,))
            for x in a:
-               c.execute("INSERT INTO piano_studi(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
-               c.execute("INSERT INTO piano(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_studi"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
                data.commit()
      data.close()
 
@@ -89,7 +100,7 @@ class GestorePrenotazione:
      data=sqlite3.connect("my_database.sqlite")
      c=data.cursor()
      bot.send_message(message.chat.id,"IL TUO PIANO")
-     result=c.execute('SELECT DISTINCT * FROM piano_studi')
+     result=c.execute('SELECT DISTINCT * FROM Piano_studi'+messaggino)
      for x in result:
          user=[]
          for y in range (5):
@@ -129,8 +140,8 @@ class GestorePrenotazione:
                    break;
                data.commit()
                bot.send_message(message.chat.id,'PRENOTAZIONE EFFETTUATA CON SUCCESSO PER IL CORSO SISTEMI OPERATIVI')
-               c.execute("INSERT INTO prenotazioni(description) VALUES('Sistemi Operativi');")
-               c.execute('DELETE FROM piano_studi WHERE descrizione="Sistemi Operativi"')
+               c.execute("INSERT INTO Prenotazioni_"+messaggino+"(description) VALUES('Sistemi Operativi');")
+               c.execute('DELETE FROM Piano_studi'+messaggino+' WHERE descrizione="Sistemi Operativi"')
                data.commit()
                GestorePrenotazione.prenota_menu(message)
      if message.text=='+Linguaggi formali e compilatori':
@@ -157,8 +168,8 @@ class GestorePrenotazione:
                    break;
                data.commit()
                bot.send_message(message.chat.id,'PRENOTAZIONE EFFETTUATA CON SUCCESSO PER IL CORSO LINGUAGGI FORMALI E COMPILATORI')
-               c.execute("INSERT INTO prenotazioni(description) VALUES('Linguaggi formali e compilatori');")
-               c.execute('DELETE FROM piano_studi WHERE descrizione="Linguaggi formali e compilatori"')
+               c.execute("INSERT INTO Prenotazioni_"+messaggino+" VALUES('Linguaggi formali e compilatori');")
+               c.execute('DELETE FROM Piano_studi'+messaggino+' WHERE descrizione="Linguaggi formali e compilatori"')
                data.commit()
                GestorePrenotazione.prenota_menu(message)
      if message.text=='+Programmazione 2':
@@ -185,8 +196,8 @@ class GestorePrenotazione:
                    break;
                data.commit()
                bot.send_message(message.chat.id,'PRENOTAZIONE EFFETTUATA CON SUCCESSO PER IL CORSO PROGRAMMAZIONE 2')
-               c.execute("INSERT INTO prenotazioni(description) VALUES('Programmazione 2');")
-               c.execute('DELETE FROM piano_studi WHERE descrizione="Programmazione 2"')
+               c.execute("INSERT INTO Prenotazioni_"+messaggino+"(description) VALUES('Programmazione 2');")
+               c.execute('DELETE FROM Piano_studi'+messaggino+' WHERE descrizione="Programmazione 2"')
                data.commit()
                GestorePrenotazione.prenota_menu(message)
      if message.text=='+Analisi 2':
@@ -213,8 +224,8 @@ class GestorePrenotazione:
                    break;
                data.commit()
                bot.send_message(message.chat.id,'PRENOTAZIONE EFFETTUATA CON SUCCESSO PER IL CORSO ANALISI 2')
-               c.execute("INSERT INTO prenotazioni(description) VALUES('Analisi 2');")
-               c.execute('DELETE FROM piano_studi WHERE descrizione="Analisi 2"')
+               c.execute("INSERT INTO Prenotazioni_"+messaggino+"(description) VALUES('Analisi 2');")
+               c.execute('DELETE FROM Piano_studi'+messaggino+' WHERE descrizione="Analisi 2"')
                data.commit()
                GestorePrenotazione.prenota_menu(message)
      if message.text=='+Diritto':
@@ -242,8 +253,8 @@ class GestorePrenotazione:
                    break;
                data.commit()
                bot.send_message(message.chat.id,'PRENOTAZIONE EFFETTUATA CON SUCCESSO PER IL CORSO DIRITTO')
-               c.execute("INSERT INTO prenotazioni(description) VALUES('Diritto');")
-               c.execute('DELETE FROM piano_studi WHERE descrizione="Diritto"')
+               c.execute("INSERT INTO Prenotazioni_"+messaggino+"(description) VALUES('Diritto');")
+               c.execute('DELETE FROM Piano_studi'+messaggino+' WHERE descrizione="Diritto"')
                data.commit()
                GestorePrenotazione.prenota_menu(message)
      if message.text=='+Fisica':
@@ -270,8 +281,8 @@ class GestorePrenotazione:
                    break;
                data.commit()
                bot.send_message(message.chat.id,'PRENOTAZIONE EFFETTUATA CON SUCCESSO PER IL CORSO FISICA')
-               c.execute("INSERT INTO prenotazioni(description) VALUES('Fisica');")
-               c.execute('DELETE FROM piano_studi WHERE descrizione="Fisica"')
+               c.execute("INSERT INTO Prenotazioni_"+messaggino+"(description) VALUES('Fisica');")
+               c.execute('DELETE FROM Piano_studi'+messaggino+' WHERE descrizione="Fisica"')
                data.commit()
                GestorePrenotazione.prenota_menu(message)
                data.close()
@@ -281,11 +292,11 @@ class GestorePrenotazione:
            data=sqlite3.connect("my_database.sqlite")
            c=data.cursor()
            bot.send_message(message.chat.id,'STAI CANCELLANDO LA PRENOTAZIONE PER SISTEMI OPERATIVI...')
-           c.execute('DELETE FROM prenotazioni WHERE description="Sistemi Operativi"')
+           c.execute('DELETE FROM Prenotazioni_'+messaggino+' WHERE description="Sistemi Operativi"')
            data.commit()
            a=c.execute('SELECT * FROM lezioni WHERE descrizione="Sistemi Operativi"')
            for x in a:
-               c.execute("INSERT INTO piano_studi(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_studi"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
                data.commit()
            c.execute('UPDATE posto SET posti=posti+1 WHERE descrizione="Sistemi Operativi"')
            data.commit()
@@ -295,11 +306,11 @@ class GestorePrenotazione:
            data=sqlite3.connect("my_database.sqlite")
            c=data.cursor()
            bot.send_message(message.chat.id,'STAI CANCELLANDO LA PRENOTAZIONE PER LINGUAGGI FORMALI E COMPILATORI...')
-           c.execute('DELETE FROM prenotazioni WHERE description="Linguaggi formali e compilatori"')
+           c.execute('DELETE FROM Prenotazioni_'+messaggino+' WHERE description="Linguaggi formali e compilatori"')
            data.commit()
            a=c.execute('SELECT * FROM lezioni WHERE descrizione="Linguaggi formali e compilatori"')
            for x in a:
-               c.execute("INSERT INTO piano_studi(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_studi"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
                data.commit()
            c.execute('UPDATE posto SET posti=posti+1 WHERE descrizione="Linguaggi formali e compilatori"')
            data.commit()
@@ -308,11 +319,11 @@ class GestorePrenotazione:
            data=sqlite3.connect("my_database.sqlite")
            c=data.cursor()
            bot.send_message(message.chat.id,'STAI CANCELLANDO LA PRENOTAZIONE PER PROGRAMMAZIONE 2...')
-           c.execute('DELETE FROM prenotazioni WHERE description="Programmazione 2"')
+           c.execute('DELETE FROM Prenotazioni_'+messaggino+' WHERE description="Programmazione 2"')
            data.commit()
            a=c.execute('SELECT * FROM lezioni WHERE descrizione="Programmazione 2"')
            for x in a:
-               c.execute("INSERT INTO piano_studi(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_studi"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
                data.commit()
                c.execute('UPDATE posto SET posti=posti+1 WHERE descrizione="Programmazione 2"')
                data.commit()
@@ -321,11 +332,11 @@ class GestorePrenotazione:
            data=sqlite3.connect("my_database.sqlite")
            c=data.cursor()
            bot.send_message(message.chat.id,'STAI CANCELLANDO LA PRENOTAZIONE PER ANALISI 2...')
-           c.execute('DELETE FROM prenotazioni WHERE description="Analisi 2"')
+           c.execute('DELETE FROM Prenotazioni_'+messaggino+' WHERE description="Analisi 2"')
            data.commit()
            a=c.execute('SELECT * FROM lezioni WHERE descrizione="Analisi 2"')
            for x in a:
-               c.execute("INSERT INTO piano_studi(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_studi"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
                data.commit()
                c.execute('UPDATE posto SET posti=posti+1 WHERE descrizione="Analisi 2"')
                data.commit()
@@ -334,11 +345,11 @@ class GestorePrenotazione:
            data=sqlite3.connect("my_database.sqlite")
            c=data.cursor()
            bot.send_message(message.chat.id,'STAI CANCELLANDO LA PRENOTAZIONE PER DIRITTO...')
-           c.execute('DELETE FROM prenotazioni WHERE description="Diritto"')
+           c.execute('DELETE FROM Prenotazioni_'+messaggino+' WHERE description="Diritto"')
            data.commit()
            a=c.execute('SELECT * FROM lezioni WHERE descrizione="Diritto"')
            for x in a:
-               c.execute("INSERT INTO piano_studi(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_studi"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
                data.commit()
                c.execute('UPDATE posto SET posti=posti+1 WHERE descrizione="Diritto"')
                data.commit()
@@ -347,11 +358,11 @@ class GestorePrenotazione:
            data=sqlite3.connect("my_database.sqlite")
            c=data.cursor()
            bot.send_message(message.chat.id,'STAI CANCELLANDO LA PRENOTAZIONE PER FISICA...')
-           c.execute('DELETE FROM prenotazioni WHERE description="Fisica"')
+           c.execute('DELETE FROM Prenotazioni_'+messaggino+' WHERE description="Fisica"')
            data.commit()
            a=c.execute('SELECT * FROM lezioni WHERE descrizione="Fisica"')
            for x in a:
-               c.execute("INSERT INTO piano_studi(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
+               c.execute("INSERT INTO Piano_studi"+messaggino+"(id ,descrizione ,data_ora ,aula,posti) VALUES(?,?,?,?,?);",(x[0],x[1],x[2],x[3],x[4]))
                data.commit()
                c.execute('UPDATE posto SET posti=posti+1 WHERE descrizione="Fisica"')
                data.commit()
@@ -363,10 +374,10 @@ class GestorePrenotazione:
     def riassunto(message):
      data=sqlite3.connect("my_database.sqlite")
      c=data.cursor()
-     result=c.execute("SELECT DISTINCT * FROM prenotazioni")
+     result=c.execute("SELECT DISTINCT * FROM Prenotazioni_"+messaggino)
      bot.send_message(message.chat.id,"TABELLA RIASSUNTIVA PRENOTAZIONI EFFETTUATE:")
      for j in result:
-            x=c.execute("SELECT DISTINCT id ,descrizione ,data_ora ,aula FROM lezioni,prenotazioni WHERE lezioni.descrizione=prenotazioni.description ")
+            x=c.execute("SELECT DISTINCT id ,descrizione ,data_ora ,aula FROM lezioni,Prenotazioni_"+messaggino+" WHERE lezioni.descrizione=Prenotazioni_"+messaggino+".description ")
             for pi in x:
                 user=[]
                 for y in range(4):
@@ -394,7 +405,7 @@ class GestorePrenotazione:
               data=sqlite3.connect("my_database.sqlite")
               c=data.cursor()
               counting=0;
-              a=c.execute("SELECT DISTINCT description FROM prenotazioni WHERE description='Sistemi Operativi'")
+              a=c.execute("SELECT DISTINCT description FROM Prenotazioni_"+messaggino+" WHERE description='Sistemi Operativi'")
               for row1 in a:
                   counting=counting+1
               if counting!=0:
@@ -406,7 +417,7 @@ class GestorePrenotazione:
                data=sqlite3.connect("my_database.sqlite")
                c=data.cursor()
                counting=0;
-               a=c.execute("SELECT DISTINCT description FROM prenotazioni WHERE description='Linguaggi formali e compilatori'")
+               a=c.execute("SELECT DISTINCT description FROM Prenotazioni_"+messaggino+" WHERE description='Linguaggi formali e compilatori'")
                for row1 in a:
                    counting=counting+1
                if counting!=0:
@@ -418,7 +429,7 @@ class GestorePrenotazione:
                 data=sqlite3.connect("my_database.sqlite")
                 c=data.cursor()
                 counting=0;
-                a=c.execute("SELECT DISTINCT description FROM prenotazioni WHERE description='Programmazione 2'")
+                a=c.execute("SELECT DISTINCT description FROM Prenotazioni_"+messaggino+" WHERE description='Programmazione 2'")
                 for row1 in a:
                     counting=counting+1
                 if counting!=0:
@@ -430,7 +441,7 @@ class GestorePrenotazione:
                  data=sqlite3.connect("my_database.sqlite")
                  c=data.cursor()
                  counting=0;
-                 a=c.execute("SELECT DISTINCT description FROM prenotazioni WHERE description='Analisi 2'")
+                 a=c.execute("SELECT DISTINCT description FROM Prenotazioni_"+messaggino+" WHERE description='Analisi 2'")
                  for row1 in a:
                      counting=counting+1
                  if counting!=0:
@@ -442,7 +453,7 @@ class GestorePrenotazione:
                 data=sqlite3.connect("my_database.sqlite")
                 c=data.cursor()
                 counting=0;
-                a=c.execute("SELECT DISTINCT description FROM prenotazioni WHERE description='Diritto'")
+                a=c.execute("SELECT DISTINCT description FROM Prenotazioni_"+messaggino+" WHERE description='Diritto'")
                 for row1 in a:
                     counting=counting+1
                 if counting!=0:
@@ -454,7 +465,7 @@ class GestorePrenotazione:
                  data=sqlite3.connect("my_database.sqlite")
                  c=data.cursor()
                  counting=0;
-                 a=c.execute("SELECT DISTINCT description FROM prenotazioni WHERE description='Fisica'")
+                 a=c.execute("SELECT DISTINCT description FROM Prenotazioni_"+messaggino+" WHERE description='Fisica'")
                  for row1 in a:
                      counting=counting+1
                  if counting!=0:
@@ -468,7 +479,7 @@ class GestorePrenotazione:
      msg2=""
      data=sqlite3.connect("my_database.sqlite")
      c=data.cursor()
-     a=c.execute("SELECT DISTINCT descrizione FROM piano_studi")
+     a=c.execute("SELECT DISTINCT descrizione FROM Piano_studi"+messaggino)
      bot.send_message(message.chat.id,"SCEGLI TRA LE LEZIONI CHE HAI INSERITO NEL PIANO; SCRIVI '+nome del corso per accedere':")
      for row in a:
          msg2=bot.send_message(message.chat.id,row)
@@ -479,7 +490,7 @@ class GestorePrenotazione:
     def resume(message):
      data=sqlite3.connect("my_database.sqlite")
      c=data.cursor()
-     a=c.execute("SELECT DISTINCT description FROM prenotazioni")
+     a=c.execute("SELECT DISTINCT description FROM Prenotazioni_"+messaggino)
      bot.send_message(message.chat.id,"SCEGLI TRA LE LEZIONI CHE HAI prenotato; SCRIVI '-nome del corso per eliminare':")
      for row in a:
           bot.send_message(message.chat.id,row)
@@ -509,7 +520,8 @@ class GestoreAccesso:
     def process1_passw_step(message):
      chat_id = message.chat.id
      age = message.text
-     user = user_dict[chat_id]
+     
+     #user = user_dict[chat_id]
      pin=message.text#pin ha la password
      #print(pin)
      #print(messaggino)
@@ -528,13 +540,13 @@ class GestoreAccesso:
                     bot.send_message(message.chat.id, "PASSWORD ERRATA")
                     GestoreAccesso.login(message)
 
-
+    
     def process1_name_step(message):
      chat_id = message.chat.id
      name = message.text
-     user = User(name)
-        #print(name)
-     user_dict[chat_id] = user
+     #user = User(name)
+     #user_dict[chat_id] = user
+     #print(user.name)#user.name mi da il nome dell'oggetto user che ho costruito
      global messaggino
      messaggino=message.text#come name stesso valore,cioe l'username inserito
      data=sqlite3.connect("my_database.sqlite")
@@ -549,7 +561,10 @@ class GestoreAccesso:
      else:
          msg=bot.send_message(message.chat.id, "INSERISCI UNA PASSWORD")
          bot.register_next_step_handler(msg,GestoreAccesso.process1_passw_step)
-
+         
+    #def messa():
+     #print(messaggino)
+     
 
 
 
@@ -605,6 +620,7 @@ class GestoreRegistrazione:
             else:
                 bot.send_message(message.chat.id,"username gia' in uso")
                 GestoreAccesso.login(message)
+    
 
 
 
@@ -686,3 +702,4 @@ class init:
 
      #RUN
 bot.polling(none_stop=True)
+
